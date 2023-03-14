@@ -7,13 +7,19 @@ const promiseTest = (
   time = 1000
 ) => {
   return new Promise((resolve, reject) => {
+    const error = [];
     setTimeout(() => {
       if (!validEmail) {
-        reject("Invalid Email!");
-      } else if (!validPassword) {
-        reject("Invalid Password");
-      } else if (!doesPasswordMatch) {
-        reject("Password must match !");
+        error.push("Invalid Email");
+      }
+      if (!validPassword) {
+        error.push("Invalid Password");
+      }
+      if (!doesPasswordMatch) {
+        error.push("Password must match");
+      }
+      if (error.length > 0) {
+        reject(error);
       } else {
         resolve("Your account has been successfully created!");
       }
@@ -30,12 +36,12 @@ const isValueUnique = (str, character) => {
   return obj[character] === 1;
 };
 
-export default function FormValidator() {
+export default function FormValidator3() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [loading, setLoading] = useState(false);
-  const [msg, setMsg] = useState("");
+  const [msg, setMsg] = useState(null);
 
   const createNewUser = async (e) => {
     e.preventDefault();
@@ -52,9 +58,11 @@ export default function FormValidator() {
         doesPasswordMatch,
         2000
       );
+      //console.log(response);
       setMsg(response);
     } catch (error) {
       setMsg(error);
+      console.log(error);
     } finally {
       setLoading(false);
     }
@@ -64,7 +72,7 @@ export default function FormValidator() {
 
   return (
     <form onSubmit={createNewUser}>
-      <h2>Sign Up 2!</h2>
+      <h2>Sign Up 3!</h2>
       <label htmlFor="email">Email</label>
       <input
         type="text"
@@ -83,7 +91,12 @@ export default function FormValidator() {
         name="password-confirm"
         onChange={(e) => setPasswordConfirm(e.target.value.replace(/\s/g, ""))}
       />
-      {msg && <p> {msg} </p>}
+
+      {Array.isArray(msg) ? (
+        <p style={{ color: "red" }}> {msg.join(", ")}</p>
+      ) : (
+        <p>{msg}</p>
+      )}
 
       <button type="submit" disabled={loading || !isDisabled}>
         {loading ? "Signing up..." : "Sign Up"}
