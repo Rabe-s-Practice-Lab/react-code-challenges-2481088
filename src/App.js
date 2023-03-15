@@ -1,10 +1,10 @@
 import "./App.css";
-import FormValidator3 from "./03-form-validator/FormValidator3";
+import DadJokes from "./04-dog-pics/DogPics1";
 
 function App() {
   return (
     <div className="App">
-      <FormValidator3 />
+      <DadJokes />
     </div>
   );
 }

@@ -1,63 +1,51 @@
-import { useState } from "react";
+import { useState } from 'react'
 
-const isValueUnique = (str, character) => {
-  const obj = [...str].reduce((acc, curr) => {
-    acc[curr] = (acc[curr] ?? 0) + 1;
-    return acc;
-  }, {});
+export default function FormValidator () {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [passwordConfirm, setPasswordConfirm] = useState('')
 
-  return obj[character] === 1;
-};
+  const [message, setMessage] = useState('')
 
-export default function FormValidator2() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordConfirm, setPasswordConfirm] = useState("");
-  const [msg, setMsg] = useState("");
-
-  const createNewUser = (e) => {
-    e.preventDefault();
-
-    const validEmail = isValueUnique(email, "@");
-    const validPassword = password.length >= 8;
-    const doesPasswordMatch = password === passwordConfirm;
-
-    if (!validEmail) {
-      setMsg("Invalid Email!");
-    } else if (!validPassword) {
-      setMsg("Invalid Password");
-    } else if (!doesPasswordMatch) {
-      setMsg("Password must match !");
-    } else {
-      setMsg("Your account has been successfully created!");
+  const findErrors = () => {
+    const errors = []
+    if (!email || !password || !passwordConfirm) errors.push('All fields must be filled in')
+    if ([...email].filter(i => i === '@').length !== 1) {
+      errors.push('An email must have exactly one @ sign')
     }
-  };
+    if (password.length <= 8) errors.push('Passwords must be 8 characters or longer')
+    if (password !== passwordConfirm) errors.push('Passwords must match')
 
-  const isDisabled = email.trim() && password.trim() && passwordConfirm.trim();
+    return errors
+  }
+
+  const handleSubmit = e => {
+    e.preventDefault()
+
+    const errors = findErrors()
+    setMessage(errors.length ? errors.join(', ') : 'User created!')
+  }
 
   return (
-    <form onSubmit={createNewUser}>
+    <form onSubmit={handleSubmit}>
       <h2>Sign Up!</h2>
-      <label htmlFor="email">Email</label>
+      <label htmlFor='email'>Email</label>
       <input
-        type="text"
-        name="email"
-        onChange={(e) => setEmail(e.target.value.replace(/\s/g, ""))}
+        type='text' name='email'
+        onChange={e => setEmail(e.target.value)}
       />
-      <label htmlFor="password">Password</label>
+      <label htmlFor='password'>Password</label>
       <input
-        type="text"
-        name="password"
-        onChange={(e) => setPassword(e.target.value.replace(/\s/g, ""))}
+        type='password' name='password'
+        onChange={e => setPassword(e.target.value)}
       />
-      <label htmlFor="password-confirm">Confirm Password </label>
+      <label htmlFor='password-confirm'>Confirm Password </label>
       <input
-        type="text"
-        name="password-confirm"
-        onChange={(e) => setPasswordConfirm(e.target.value.replace(/\s/g, ""))}
+        type='password' name='password-confirm'
+        onChange={e => setPasswordConfirm(e.target.value)}
       />
-      {msg && <p> {msg} </p>}
-      <input type="submit" value="Submit" disabled={!isDisabled} />
+      {message}
+      <input type='submit' value='Submit' />
     </form>
-  );
+  )
 }
